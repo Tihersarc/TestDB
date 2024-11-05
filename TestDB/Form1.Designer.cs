@@ -40,6 +40,8 @@
             this.btnInsertJob = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
             this.dgvJobs = new System.Windows.Forms.DataGridView();
+            this.btnRefresh = new System.Windows.Forms.Button();
+            this.btnSave = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numMinimumSalary)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numMaximumSalary)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvJobs)).BeginInit();
@@ -166,11 +168,33 @@
             this.dgvJobs.Size = new System.Drawing.Size(579, 609);
             this.dgvJobs.TabIndex = 13;
             // 
+            // btnRefresh
+            // 
+            this.btnRefresh.Location = new System.Drawing.Point(430, 47);
+            this.btnRefresh.Name = "btnRefresh";
+            this.btnRefresh.Size = new System.Drawing.Size(75, 23);
+            this.btnRefresh.TabIndex = 14;
+            this.btnRefresh.Text = "Refresh";
+            this.btnRefresh.UseVisualStyleBackColor = true;
+            this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
+            // 
+            // btnSave
+            // 
+            this.btnSave.Location = new System.Drawing.Point(511, 47);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(75, 23);
+            this.btnSave.TabIndex = 15;
+            this.btnSave.Text = "Save";
+            this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(961, 693);
+            this.Controls.Add(this.btnSave);
+            this.Controls.Add(this.btnRefresh);
             this.Controls.Add(this.dgvJobs);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.btnInsertJob);
@@ -207,6 +231,8 @@
         private System.Windows.Forms.Button btnInsertJob;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.DataGridView dgvJobs;
+        private System.Windows.Forms.Button btnRefresh;
+        private System.Windows.Forms.Button btnSave;
     }
 }
 

@@ -95,12 +95,44 @@ namespace TestDB
                 throw;
             }
 
+            CloseConnection();
             return jobList;
+        }
+
+        public static void UpdateJob(Jobs job)
+        {
+            string query = "UPDATE jobs " +
+                "SET job_title = @JobTitle, min_salary = @MinSalary, max_salary = @MaxSalary " +
+                "WHERE job_id = @JobId";
+
+            OpenConnection();
+
+            try
+            {
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+
+                    command.Parameters.AddWithValue("@JobId", job.JobId);
+                    command.Parameters.AddWithValue("@JobTitle", job.JobTitle ?? (object)DBNull.Value);
+
+                    command.Parameters.AddWithValue("@MinSalary", job.MinSalary.HasValue ?
+                                                    (object)job.MinSalary.Value : DBNull.Value);
+
+                    command.Parameters.AddWithValue("@MaxSalary", job.MaxSalary.HasValue ?
+                                                    (object)job.MaxSalary.Value : DBNull.Value);
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Windows.Forms.MessageBox.Show("Error updating job: " + ex);
+            }
+
+            CloseConnection();
         }
 
         public static void InsertJob(Jobs job)
         {
-            SocketManager.OpenConnection();
+            OpenConnection();
 
             try
             {
@@ -122,7 +154,7 @@ namespace TestDB
                 System.Windows.Forms.MessageBox.Show("Error inserting:" + ex);
             }
 
-            SocketManager.CloseConnection();
+            CloseConnection();
         }
     }
 }

@@ -69,5 +69,25 @@ namespace TestDB
             else 
                 btnInsertJob.Enabled = false;
         }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            foreach (DataGridViewRow row in dgvJobs.Rows)
+            {
+                int id = (int)row.Cells["JobId"].Value;
+
+                string jobTitle = (string)row.Cells["JobTitle"].Value;
+                decimal? minSalary = row.Cells["MinSalary"].Value as decimal?;
+                decimal? maxSalary = row.Cells["MaxSalary"].Value as decimal?;
+
+                Jobs jobs = new Jobs(jobTitle, minSalary ?? 0, maxSalary ?? 0);
+                SocketManager.UpdateJob(jobs);
+            }
+        }
+
+        private void btnRefresh_Click(object sender, EventArgs e)
+        {
+            LoadJobs();
+        }
     }
 }
