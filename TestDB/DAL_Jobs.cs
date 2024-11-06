@@ -94,12 +94,16 @@ namespace TestDB
             {
                 string query =
                     $@"INSERT INTO jobs(job_title, min_salary, max_salary)
-                    VALUES ('{job.JobTitle}', {job.MinSalary.ToString() ?? "NULL"},
-                             {job.MaxSalary.ToString() ?? "NULL"})";
+                    VALUES ('@JobTitle', @MinSalary, @MaxSalary)";
 
-                SqlCommand cmd = new SqlCommand(query, socketManager.Connection);
-
-                cmd.ExecuteNonQuery();
+                using (SqlCommand cmd = new SqlCommand(query, socketManager.Connection))
+                {
+                    cmd.Parameters.AddWithValue("@JobTitle", job.JobTitle);
+                    cmd.Parameters.AddWithValue("@MinSalary", (object)job.MinSalary.ToString() ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@MaxSalary", (object)job.MaxSalary.ToString() ?? DBNull.Value);
+                    
+                    cmd.ExecuteNonQuery();
+                }
 
             }
             catch (Exception ex)
