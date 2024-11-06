@@ -38,7 +38,7 @@ namespace TestDB
         {
             try
             {
-                connection = new SqlConnection(ConnectionString);
+                Connection = new SqlConnection(ConnectionString);
             }
             catch (Exception ex)
             {
@@ -51,7 +51,7 @@ namespace TestDB
         {
             try
             {
-                connection.Open();
+                Connection.Open();
             }
             catch (Exception ex)
             {
@@ -63,7 +63,7 @@ namespace TestDB
         {
             try
             {
-                connection.Close();
+                Connection.Close();
             }
             catch (Exception ex)
             {
