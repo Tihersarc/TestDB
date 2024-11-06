@@ -12,33 +12,20 @@ namespace TestDB
 {
     public partial class Form1 : Form
     {
+        private DAL_Jobs DalJobs;
+
         public Form1()
         {
             InitializeComponent();
 
-            SocketManager.CreateConnection();
+            DalJobs = new DAL_Jobs();
+
             LoadJobs();
         }
 
         private void LoadJobs()
         {
-            dgvJobs.DataSource = SocketManager.GetJobs();
-        }
-
-        private void btnConnect_Click(object sender, EventArgs e)
-        {
-            SocketManager.OpenConnection();
-            lblStatus.Text = "Open";
-            btnConnect.Enabled = false;
-            btnDisconnect.Enabled = true;
-        }
-
-        private void btnDisconnect_Click(object sender, EventArgs e)
-        {
-            SocketManager.CloseConnection();
-            lblStatus.Text = "Closed";
-            btnConnect.Enabled = true;
-            btnDisconnect.Enabled = false;
+            dgvJobs.DataSource = DalJobs.GetJobs();
         }
 
         private void btnInsertJob_Click(object sender, EventArgs e)
@@ -49,7 +36,7 @@ namespace TestDB
 
             Jobs j = new Jobs(jobTitle, minSalary, maxSalary);
 
-            SocketManager.InsertJob(j);
+            DalJobs.InsertJob(j);
         }
 
         private void numMinimumSalary_ValueChanged(object sender, EventArgs e)
@@ -81,7 +68,7 @@ namespace TestDB
                 decimal? maxSalary = row.Cells["MaxSalary"].Value as decimal?;
 
                 Jobs jobs = new Jobs(jobTitle, minSalary ?? 0, maxSalary ?? 0);
-                SocketManager.UpdateJob(jobs);
+                DalJobs.UpdateJob(jobs);
             }
         }
 
