@@ -8,27 +8,37 @@ using System.Threading.Tasks;
 
 namespace TestDB
 {
-    internal static class SocketManager
+    internal class SocketManager
     {
-        static public bool IsConnected {
+        public bool IsConnected {
             get {
-                return connection != null && connection.State == System.Data.ConnectionState.Open; 
+                return Connection != null && 
+                       Connection.State == System.Data.ConnectionState.Open; 
             } 
         }
 
-        static private SqlConnection connection;
-        static private readonly string connectionString =
-            "Data Source=85.208.21.117,54321;" +
+        public SqlConnection Connection { get; private set; }
+        private string ConnectionString
+        {
+            get {
+            return "Data Source=85.208.21.117,54321;" +
             "Initial Catalog=PolRodriguezEmployees;" +
             "User ID=sa;" +
             "Password=Sql#123456789;" +
             "TrustServerCertificate=True;";
+            }
+        }
+        
+        public SocketManager()
+        {
+            CreateConnection();
+        }
 
-        public static void CreateConnection()
+        public void CreateConnection()
         {
             try
             {
-                connection = new SqlConnection(connectionString);
+                connection = new SqlConnection(ConnectionString);
             }
             catch (Exception ex)
             {
@@ -37,7 +47,7 @@ namespace TestDB
             }
         }
 
-        public static void OpenConnection()
+        public void OpenConnection()
         {
             try
             {
@@ -49,7 +59,7 @@ namespace TestDB
             }
         }
 
-        public static void CloseConnection()
+        public void CloseConnection()
         {
             try
             {
@@ -59,102 +69,6 @@ namespace TestDB
             {
                 System.Windows.Forms.MessageBox.Show("Error Closing Connection:\n" + ex);
             }
-        }
-
-        public static List<Jobs> GetJobs()
-        {
-            OpenConnection();
-
-            List<Jobs> jobList = new List<Jobs>();
-            string query = "SELECT job_id, job_title, min_salary, max_salary FROM jobs";
-
-            try
-            {
-                using (SqlCommand command = new SqlCommand(query, connection))
-                {
-                    using (SqlDataReader reader = command.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            Jobs job = new Jobs
-                            {
-                                JobId = reader.GetInt32(0),
-                                JobTitle = reader.GetString(1),
-                                MinSalary = reader.IsDBNull(2) ? (decimal?)null : reader.GetDecimal(2),
-                                MaxSalary = reader.IsDBNull(3) ? (decimal?)null : reader.GetDecimal(3)
-                            };
-
-                            jobList.Add(job);
-                        }
-                    }
-                }
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-
-            CloseConnection();
-            return jobList;
-        }
-
-        public static void UpdateJob(Jobs job)
-        {
-            string query = "UPDATE jobs " +
-                "SET job_title = @JobTitle, min_salary = @MinSalary, max_salary = @MaxSalary " +
-                "WHERE job_id = @JobId";
-
-            OpenConnection();
-
-            try
-            {
-                using (SqlCommand command = new SqlCommand(query, connection))
-                {
-
-                    command.Parameters.AddWithValue("@JobId", job.JobId);
-                    command.Parameters.AddWithValue("@JobTitle", job.JobTitle ?? (object)DBNull.Value);
-
-                    command.Parameters.AddWithValue("@MinSalary", job.MinSalary.HasValue ?
-                                                    (object)job.MinSalary.Value : DBNull.Value);
-
-                    command.Parameters.AddWithValue("@MaxSalary", job.MaxSalary.HasValue ?
-                                                    (object)job.MaxSalary.Value : DBNull.Value);
-                }
-            }
-            catch (Exception ex)
-            {
-                System.Windows.Forms.MessageBox.Show("Error updating job: " + ex);
-            }
-
-            CloseConnection();
-        }
-
-        public static void InsertJob(Jobs job)
-        {
-            OpenConnection();
-
-            try
-            {
-                //string minSal = job.MinSalary.ToString() ?? ;
-
-                string query = 
-                    $@"INSERT INTO jobs(job_title, min_salary, max_salary)
-                    VALUES ('{job.JobTitle}', {job.MinSalary.ToString() ?? "NULL"},
-                             {job.MaxSalary.ToString() ?? "NULL"})";
-
-                SqlCommand cmd = new SqlCommand(query, connection);
-
-                cmd.ExecuteNonQuery();
-
-            }
-            catch (Exception ex)
-            {
-
-                System.Windows.Forms.MessageBox.Show("Error inserting:" + ex);
-            }
-
-            CloseConnection();
         }
     }
 }
