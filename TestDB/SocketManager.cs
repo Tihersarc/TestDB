@@ -42,7 +42,6 @@ namespace TestDB
             }
             catch (Exception ex)
             {
-
                 System.Windows.Forms.MessageBox.Show("Error Creating Connection:\n" + ex);
             }
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Net.Sockets;
@@ -17,13 +18,15 @@ namespace TestDB
             socketManager = new SocketManager();
         }
 
-        public List<Jobs> GetJobs()
+        public BindingList<Jobs> GetJobs()
         {
             socketManager.OpenConnection();
 
-            List<Jobs> jobList = new List<Jobs>();
-            string query = "SELECT job_id, job_title, min_salary, max_salary FROM jobs";
-
+            BindingList<Jobs> jobList = new BindingList<Jobs>();
+            string query = "SELECT job_id, job_title, min_salary, max_salary FROM jobs" 
+                //+ "SELECT Scope_identity()"
+                ;
+            //SELECT Sciope_Identity; && ExecuteScalar();
             try
             {
                 using (SqlCommand command = new SqlCommand(query, socketManager.Connection))
@@ -45,10 +48,10 @@ namespace TestDB
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
-                throw;
+                System.Windows.Forms.MessageBox.Show("Error Selecting:\n" + ex);
             }
 
             socketManager.CloseConnection();
@@ -69,13 +72,15 @@ namespace TestDB
                 {
 
                     command.Parameters.AddWithValue("@JobId", job.JobId);
-                    command.Parameters.AddWithValue("@JobTitle", job.JobTitle ?? (object)DBNull.Value);
+                    command.Parameters.AddWithValue("@JobTitle", job.JobTitle);
 
                     command.Parameters.AddWithValue("@MinSalary", job.MinSalary.HasValue ?
-                                                    (object)job.MinSalary.Value : DBNull.Value);
+                                                    job.MinSalary.Value : (object)DBNull.Value);
 
                     command.Parameters.AddWithValue("@MaxSalary", job.MaxSalary.HasValue ?
-                                                    (object)job.MaxSalary.Value : DBNull.Value);
+                                                    job.MaxSalary.Value : (object)DBNull.Value);
+
+                    command.ExecuteNonQuery();
                 }
             }
             catch (Exception ex)
@@ -83,7 +88,7 @@ namespace TestDB
                 System.Windows.Forms.MessageBox.Show("Error updating job: " + ex);
             }
 
-            socketManager.OpenConnection();
+            socketManager.CloseConnection();
         }
 
         public void InsertJob(Jobs job)
@@ -101,10 +106,8 @@ namespace TestDB
                     cmd.Parameters.AddWithValue("@JobTitle", job.JobTitle);
                     cmd.Parameters.AddWithValue("@MinSalary", (object)job.MinSalary.ToString() ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@MaxSalary", (object)job.MaxSalary.ToString() ?? DBNull.Value);
-                    
                     cmd.ExecuteNonQuery();
                 }
-
             }
             catch (Exception ex)
             {
@@ -112,7 +115,7 @@ namespace TestDB
                 System.Windows.Forms.MessageBox.Show("Error inserting:" + ex);
             }
 
-            socketManager.OpenConnection();
+            socketManager.CloseConnection();
         }
     }
 }

@@ -26,5 +26,13 @@ namespace TestDB
 
             JobId = jobId;
         }
+
+        public override string ToString()
+        {
+            return $"Id: {JobId}\n" +
+                $"Title: {JobTitle}\n" +
+                $"MinSal: {MinSalary}\n" +
+                $"MaxSal: {MaxSalary}";
+        }
     }
 }
