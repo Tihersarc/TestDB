@@ -23,13 +23,13 @@ namespace TestDB
             LoadJobs();
 
             //-------LINQ TO SQL----------
-            EmployeesDataClasses dc = new EmployeesDataClasses();
-            var data = from emp in dc.employees
-                       where emp.first_name == "Steve"
-                       select emp;
+            //EmployeesDataClasses dc = new EmployeesDataClasses();
+            //var data = from emp in dc.employees
+            //           where emp.first_name == "Steve"
+            //           select emp;
 
-            //DataSource = data
-            dc.SubmitChanges();
+            ////DataSource = data
+            ////dc.SubmitChanges();
         }
 
         private void LoadJobs()

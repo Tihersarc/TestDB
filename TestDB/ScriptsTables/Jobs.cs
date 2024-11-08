@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Linq.Mapping;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace TestDB
 {
+    [Table(Name = "jobs")]
     public class Jobs
     {
         public int JobId { get; set; }
