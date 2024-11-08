@@ -60,9 +60,11 @@ namespace TestDB
 
         public void Update(Jobs job)
         {
-            string query = "UPDATE jobs " +
-                "SET job_title = @JobTitle, min_salary = @MinSalary, max_salary = @MaxSalary " +
-                "WHERE job_id = @JobId";
+            string query = @"
+                UPDATE Employees
+                SET FirstName = @FirstName, LastName = @LastName, Email = @Email, PhoneNumber = @PhoneNumber, HireDate = @HireDate,
+                    Salary = @Salary, JobId = @JobId, ManagerId = @ManagerId, DepartmentId = @DepartmentId
+                WHERE EmployeeId = @EmployeeId";
 
             socketManager.OpenConnection();
 
@@ -73,12 +75,8 @@ namespace TestDB
 
                     command.Parameters.AddWithValue("@JobId", job.JobId);
                     command.Parameters.AddWithValue("@JobTitle", job.JobTitle);
-
-                    command.Parameters.AddWithValue("@MinSalary", job.MinSalary.HasValue ?
-                                                    job.MinSalary.Value : (object)DBNull.Value);
-
-                    command.Parameters.AddWithValue("@MaxSalary", job.MaxSalary.HasValue ?
-                                                    job.MaxSalary.Value : (object)DBNull.Value);
+                    command.Parameters.AddWithValue("@MinSalary", job.MinSalary.HasValue ? job.MinSalary.Value : (object)DBNull.Value);
+                    command.Parameters.AddWithValue("@MaxSalary", job.MaxSalary.HasValue ? job.MaxSalary.Value : (object)DBNull.Value);
 
                     command.ExecuteNonQuery();
                 }
@@ -91,7 +89,7 @@ namespace TestDB
             socketManager.CloseConnection();
         }
 
-        public void Insert(Jobs job)
+        public int Insert(Jobs job)
         {
             int id = -1;
 
@@ -119,6 +117,18 @@ namespace TestDB
             }
 
             socketManager.CloseConnection();
+
+            return id;
+        }
+
+        public Jobs GetById(int id)
+        {
+            foreach (Jobs j in Select())
+            {
+                if (j.JobId == id) return j;
+            }
+
+            return null;
         }
     }
 }
