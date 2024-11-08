@@ -25,7 +25,7 @@ namespace TestDB
 
         private void LoadJobs()
         {
-            dgvJobs.DataSource = DalJobs.GetJobs();
+            dgvJobs.DataSource = DalJobs.Select();
         }
 
         private void btnInsertJob_Click(object sender, EventArgs e)
@@ -36,7 +36,7 @@ namespace TestDB
 
             Jobs j = new Jobs(jobTitle, minSalary, maxSalary);
 
-            DalJobs.InsertJob(j);
+            DalJobs.Insert(j);
         }
 
         private void numMinimumSalary_ValueChanged(object sender, EventArgs e)
@@ -65,7 +65,7 @@ namespace TestDB
         private void dgvJobs_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
             Jobs job = (Jobs)dgvJobs.Rows[e.RowIndex].DataBoundItem;
-            DalJobs.UpdateJob(job);
+            DalJobs.Update(job);
             LoadJobs();
         }
     }

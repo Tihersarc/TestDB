@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using TestDB.ScriptsTables;
 
 namespace TestDB
 {
@@ -18,15 +19,14 @@ namespace TestDB
             socketManager = new SocketManager();
         }
 
-        public BindingList<Jobs> GetJobs()
+        public BindingList<Jobs> Select()
         {
             socketManager.OpenConnection();
 
             BindingList<Jobs> jobList = new BindingList<Jobs>();
-            string query = "SELECT job_id, job_title, min_salary, max_salary FROM jobs" 
-                //+ "SELECT Scope_identity()"
-                ;
-            //SELECT Sciope_Identity; && ExecuteScalar();
+            string query = "SELECT job_id, job_title, min_salary, max_salary " +
+                            "FROM jobs";
+
             try
             {
                 using (SqlCommand command = new SqlCommand(query, socketManager.Connection))
@@ -58,7 +58,7 @@ namespace TestDB
             return jobList;
         }
 
-        public void UpdateJob(Jobs job)
+        public void Update(Jobs job)
         {
             string query = "UPDATE jobs " +
                 "SET job_title = @JobTitle, min_salary = @MinSalary, max_salary = @MaxSalary " +
@@ -91,22 +91,25 @@ namespace TestDB
             socketManager.CloseConnection();
         }
 
-        public void InsertJob(Jobs job)
+        public void Insert(Jobs job)
         {
+            int id = -1;
+
             socketManager.OpenConnection();
 
             try
             {
                 string query =
                     $@"INSERT INTO jobs(job_title, min_salary, max_salary)
-                    VALUES ('@JobTitle', @MinSalary, @MaxSalary)";
+                    VALUES ('@JobTitle', @MinSalary, @MaxSalary)
+                    SELECT Scope_identity()";
 
                 using (SqlCommand cmd = new SqlCommand(query, socketManager.Connection))
                 {
                     cmd.Parameters.AddWithValue("@JobTitle", job.JobTitle);
                     cmd.Parameters.AddWithValue("@MinSalary", (object)job.MinSalary.ToString() ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@MaxSalary", (object)job.MaxSalary.ToString() ?? DBNull.Value);
-                    cmd.ExecuteNonQuery();
+                    id = (int)cmd.ExecuteScalar();
                 }
             }
             catch (Exception ex)
