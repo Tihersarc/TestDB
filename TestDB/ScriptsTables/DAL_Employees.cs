@@ -15,7 +15,6 @@ namespace TestDB.ScriptsTables
 
         DAL_Employees() {
             socketManager = new SocketManager();
-
         }
 
         public BindingList<Employees> Select()

@@ -23,9 +23,15 @@ namespace TestDB
 
         public BindingList<Jobs> Select()
         {
-            var data = db.jobs.ToList();
-                
-            return new BindingList<Jobs>((IList<Jobs>)data); //Problems
+            var data = db.jobs.Select(j => new Jobs
+            {
+                JobId = j.job_id,
+                JobTitle = j.job_title,
+                MinSalary = j.min_salary,
+                MaxSalary = j.max_salary
+            }).ToList();
+
+            return new BindingList<Jobs>(data);
         }
 
         public void Update(Jobs job)
